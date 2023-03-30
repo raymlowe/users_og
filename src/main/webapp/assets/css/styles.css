@@ -1,0 +1,53 @@
+body{
+	font-size: 18px;
+	background-color: #dedede;
+}
+
+input{
+	padding:5px;
+	min-width:180px;
+}
+
+th{
+	border: none;
+}
+
+td{
+	padding: 5px;
+	border: none;
+}
+
+/*main navigation*/
+.main_navigation li{
+	list-style-type:none;
+	display: inline;
+	padding: 10px;
+	
+}
+
+.main_navigation li a{
+	text-decoration: none;
+}
+
+.update_button{
+	font-weight:bold;
+	font-size:18px;
+	background-color: #D9EAF7;
+}
+
+.update_element{
+	background-color:#fefefe;
+	width: 100%;
+	padding:20px;
+}
+
+.button_styled{
+	background-color:#D9EAF7;
+	padding: 5px;
+	border: solid #666666 2px;
+}
+
+.button_styled a{
+	text-decoration: none;
+	color: #000000;
+}

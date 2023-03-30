@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<infinispan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="urn:infinispan:config:14.0 https://www.infinispan.org/schemas/infinispan-config-14.0.xsd"
+	xmlns="urn:infinispan:config:14.0">
+	
+	<cache-container default-cache="default">
+	
+		<jmx duplicate-domains="true" />
+		<local-cache name="persistentCache">
+			<persistence passivation="false">
+				<store class="org.infinispan.persistence.file.SingleFileStore"
+					fetch-state="true" read-only="false"
+					purge="false">
+					<property name="location">${java.io.tmpdir}</property>
+				</store>
+			</persistence>
+		</local-cache>
+		<local-cache name="RecommendedPagesDescLift">
+			<eviction strategy="LIRS" max-entries="2000" />
+			<!-- Data cached for 1 minutes -->
+			<expiration lifespan="60000" max-idle="60000"
+				interval="1000" />
+		</local-cache>
+		<local-cache name="RecommendedPagesDailyDescLift">
+			<eviction strategy="LIRS" max-entries="2000" />
+			<!-- Data cached for 1 minutes -->
+			<expiration lifespan="60000" max-idle="60000"
+				interval="1000" />
+		</local-cache>
+		<local-cache name="ListNodeRule">
+			<eviction strategy="LIRS" max-entries="2000" />
+			<!-- Data cached for 1 minutes -->
+			<expiration lifespan="60000" max-idle="60000"
+				interval="1000" />
+		</local-cache>
+		
+	</cache-container>
+	
+</infinispan>

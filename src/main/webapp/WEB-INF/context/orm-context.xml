@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+                        http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.springframework.org/schema/context
+                        http://www.springframework.org/schema/context/spring-context-4.3.xsd
+                        http://www.springframework.org/schema/tx 
+                        http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+                        http://www.springframework.org/schema/mvc 
+                        http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+                        http://www.springframework.org/schema/aop 
+                        http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+                        http://www.springframework.org/schema/task 
+                        http://www.springframework.org/schema/task/spring-task-4.3.xsd
+                        http://www.springframework.org/schema/util
+                        http://www.springframework.org/schema/util/spring-util.xsd
+                			http://www.springframework.org/schema/jee
+                			http://www.springframework.org/schema/jee/spring-jee.xsd
+                			http://www.springframework.org/schema/cache 
+						http://www.springframework.org/schema/cache/spring-cache.xsd"
+	default-autowire="byName">
+
+	<!-- Enable Spring cache annotation -->
+	<cache:annotation-driven />
+
+	<!-- OBJECT RELATIONAL MAPPING Declarations -->
+	<!-- ################## Transaction manager ################## -->
+	<tx:annotation-driven
+		transaction-manager="transactionManager" />
+	<tx:jta-transaction-manager />
+
+	<!-- <bean id="transactionManager" class="org.springframework.transaction.jta.JtaTransactionManager"> -->
+	<!-- <property name="userTransactionName"> -->
+	<!-- <value>UserTransaction</value> -->
+	<!-- </property> -->
+	<!-- </bean> -->
+
+	<!-- ################## DataSource ################## -->
+	<jee:jndi-lookup id="orbeonWS"
+		jndi-name="${orbeonWS.dataSource.value}" lazy-init="false" />
+
+
+	<bean id="orbeonWSSessionFactory"
+		class="org.springframework.orm.hibernate5.LocalSessionFactoryBean"
+		depends-on="transactionManager">
+		<property name="dataSource" ref="orbeonWS" />
+		<property name="hibernateProperties">
+			<value>
+				hibernate.dialect=org.hibernate.dialect.PostgreSQL82Dialect
+				hibernate.show_sql=false
+				hibernate.search.autoregister_listeners=false
+				hibernate.max_fetch_depth=1
+				hibernate.jdbc.fetch_size=30
+				hibernate.jdbc.batch_size=20
+				hibernate.jdbc.use_streams_for_binary=true
+				hibernate.transaction.factory_class=org.hibernate.transaction.JTATransactionFactory
+				hibernate.transaction.jta.platform=org.hibernate.service.jta.platform.internal.JBossAppServerJtaPlatform
+				transaction.manager_lookup_class=org.hibernate.transaction.JBossTransactionManagerLookup
+				hibernate.enable_lazy_load_no_trans=true
+				<!-- hibernate.current_session_context_class=jta DEFAULT TO SPRING'S 
+					SPRING SESSION CONTEXT -->
+				hibernate.connection.release_mode=auto
+				hibernate.connection.SetBigStringTryClob=true
+				<!-- ################################### -->
+				<!-- 2L Cache Configs -->
+				hibernate.cache.provider_class=org.hibernate.cache.NoCacheProvider
+				hibernate.cache.use_second_level_cache=false
+				hibernate.cache.use_query_cache=false
+				<!-- hibernate.cache.use_second_level_cache=true hibernate.cache.use_query_cache=false -->
+				<!--hibernate.cache.region.factory_class=org.hibernate.cache.ehcache.EhCacheRegionFactory -->
+				<!-- Currently there is a bug with JNDI Cache which should be fixed in 
+					late JBOSS versions The work around doesn't work :: https://issues.jboss.org/browse/HIBERNATE-134 -->
+				<!-- hibernate.cache.region.factory_class=org.hibernate.cache.infinispan.InfinispanRegionFactory -->
+				<!--hibernate.cache.infinispan.cfg=infinispan-configs.xml -->
+				<!-- hibernate.cache.infinispan.entity.eviction.strategy=LRU hibernate.cache.infinispan.entity.eviction.wake_up_interval=5000 
+					hibernate.cache.infinispan.entity.eviction.max_entries=10000 hibernate.cache.infinispan.entity.expiration.lifespan=60000 
+					hibernate.cache.infinispan.entity.expiration.max_idle=60000 -->
+				<!-- org.hibernate.cache.infinispan.InfinispanRegionFactory -->
+				<!-- hibernate.cache.infinispan.cachemanager=java:jboss/infinispan/hibernate 
+					hibernate.cache.region.factory_class=org.hibernate.cache.infinispan.JndiInfinispanRegionFactory -->
+				<!-- ################################### -->
+
+			</value>
+		</property>
+		<property name="packagesToScan" value="ca.bc.gov.sdpr.ccof"></property>
+
+	</bean>
+
+	<bean id="cacheManager"
+		class="org.infinispan.spring.remote.provider.SpringRemoteCacheManagerFactoryBean"
+		p:configurationProperties="classpath:context/infinispan.xml">
+	</bean>
+
+</beans>

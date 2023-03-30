@@ -1,0 +1,3 @@
+<jboss-web>
+    <context-root>orbeonrpt</context-root>
+</jboss-web>
